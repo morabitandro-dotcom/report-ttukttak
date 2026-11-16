@@ -5,7 +5,7 @@
 
 ## 내려받기
 
-👉 **[최신 버전 내려받기](https://github.com/morabitandro-dotcom/report-ttukttak/releases/latest)** → `보고서뚝딱_설치_<버전>.exe`
+👉 **[최신 버전 내려받기](https://github.com/morabitandro-dotcom/report-ttukttak/releases/latest)** → `ReportTtukttak_Setup_<버전>.exe`
 
 1. 설치 파일을 실행해요. "Windows의 PC 보호" 창이 뜨면 **[추가 정보] → [실행]** (코드 서명이 없어서 처음에 떠요).
 2. 관리자 권한 없이 내 계정에만 설치돼요: `%LOCALAPPDATA%\Programs\보고서뚝딱`
