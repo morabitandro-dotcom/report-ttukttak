@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보고서뚝딱</title>
+<meta name="description" content="유튜브 영상과 내 영상·음성 파일을 자막과 요약 보고서(HTML·PDF)로 만들어 주는 Windows 앱">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<style>
+:root{--bg:#f7f9fb;--card:#fff;--text:#1b2430;--sub:#566273;--muted:#8a94a1;--line:#e3e8ee;--teal:#0e9384;--teal-d:#0b7468;--teal-l:#e3f5f2;--blue:#2f6fdb;--blue-l:#e8f1fd;--orange:#f97316;--shadow:0 10px 30px rgba(20,40,60,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12161c;--card:#1b2129;--text:#e8edf3;--sub:#a9b3bf;--muted:#7d8896;--line:#2a323c;--teal:#2dbfad;--teal-d:#2dbfad;--teal-l:#163934;--blue:#6b9cf0;--blue-l:#1c2a44;--shadow:0 10px 30px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+a{color:var(--teal-d)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:10px;height:60px}
+header.top img{width:30px;height:30px}
+header.top b{font-size:17px}
+header.top nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+header.top nav a{color:var(--sub);text-decoration:none}
+header.top nav a:hover{color:var(--text)}
+.hero{padding:72px 0 48px;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.hero h1{font-size:44px;line-height:1.2;margin:0 0 14px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero p.lead{font-size:18px;color:var(--sub);margin:0 0 26px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px}
+.btn.pri{background:var(--teal);color:#fff;box-shadow:0 6px 18px rgba(14,147,132,.3)}
+.btn.pri:hover{background:var(--teal-d)}
+.btn.sec{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.logo-big{width:100%;max-width:300px;justify-self:center;filter:drop-shadow(0 20px 40px rgba(14,147,132,.25))}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+.badge{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--teal-l);color:var(--teal-d);font-weight:600}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section h2{font-size:28px;margin:0 0 8px;letter-spacing:-.3px}
+section .sub{color:var(--sub);margin:0 0 28px}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.flow div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative}
+.flow div:before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;font-size:14px;margin-bottom:8px}
+.flow b{display:block;margin-bottom:4px}
+.flow small{color:var(--sub);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.card .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px;background:var(--blue-l);margin-bottom:10px}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--sub);font-size:14.5px}
+.vis{display:grid;grid-template-columns:.9fr 1.1fr;gap:32px;align-items:start}
+.vis ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.vis li{background:var(--blue-l);color:var(--text);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600}
+.shot{border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);width:100%;max-height:560px;object-fit:cover;object-position:top;background:#fff}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.steps .card b{color:var(--teal-d)}
+.req{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+code{background:var(--blue-l);padding:1px 6px;border-radius:6px;font-size:.92em}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700}
+details p{color:var(--sub);margin:8px 0 0}
+footer{padding:36px 0 50px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+@media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:40px}.logo-big{max-width:180px;order:-1}.flow,.grid,.steps{grid-template-columns:1fr 1fr}.vis,.req{grid-template-columns:1fr}header.top nav{display:none}.hero h1{font-size:34px}}
+@media (max-width:520px){.flow,.grid,.steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><img src="logo.svg" alt=""><b>보고서뚝딱</b>
+  <nav><a href="#how">사용법</a><a href="#features">기능</a><a href="#visuals">정리 그림</a><a href="#install">설치</a><a href="#faq">자주 묻는 것</a></nav></div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <div class="badges"><span class="badge">Windows 10·11</span><span class="badge">무료</span><span class="badge">API 키 없이 구독 로그인만</span></div>
+      <h1>영상 한 편이<br><em>보고서 한 권</em>으로 뚝딱</h1>
+      <p class="lead">유튜브 주소나 내 영상·음성 파일을 넣으면 자막을 모으고, 내 Claude·ChatGPT 구독으로 요약해서 목차·근거 시각·그림까지 갖춘 HTML·PDF 보고서로 만들어 줘요.</p>
+      <div class="btns"><a class="btn pri" href="https://github.com/morabitandro-dotcom/report-ttukttak/releases/latest">⬇ 최신 버전 내려받기</a><a class="btn sec" href="#features">기능 보기</a></div>
+      <p class="note">설치 파일 <code>ReportTtukttak_Setup_&lt;버전&gt;.exe</code> · 관리자 권한 없이 설치 · 앱 안에서 자동 업데이트</p>
+    </div>
+    <img class="logo-big" src="logo.svg" alt="보고서뚝딱 로고">
+  </div>
+
+  <section id="how">
+    <h2>이렇게 써요</h2>
+    <p class="sub">주소를 넣고 기다리면 끝이에요. 한도에 걸려도 풀리면 알아서 이어서 해요.</p>
+    <div class="flow">
+      <div><b>주소 넣기</b><small>유튜브 주소 붙여 넣기, 내 파일 끌어다 놓기, 브라우저 버튼 한 번</small></div>
+      <div><b>자막 모으기</b><small>수동·자동 자막, 없으면 받아쓰기(Whisper)로</small></div>
+      <div><b>AI 요약</b><small>구간별로 요약하고 주제별 장으로 다시 묶어요</small></div>
+      <div><b>보고서 완성</b><small>HTML·PDF(A4·태블릿·폰), 텔레그램으로도 받기</small></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>기능</h2>
+    <p class="sub">공부·투자 정보 정리에 필요한 것들을 담았어요.</p>
+    <div class="grid">
+      <div class="card"><div class="ic">📑</div><h3>제대로 된 보고서</h3><p>표지·목차(쪽번호)·핵심 세 줄·장별 요약. 발언자 주장과 AI 시사점을 나눠서 보여 줘요.</p></div>
+      <div class="card"><div class="ic">⏱</div><h3>근거 시각 링크</h3><p>모든 주장 옆에 영상 시각 링크. 자막에서 확인 안 된 숫자는 따로 표시해요.</p></div>
+      <div class="card"><div class="ic">📱</div><h3>기기별 PDF</h3><p>A4·태블릿·스마트폰 크기로 같은 내용을 보기 좋게 만들어요.</p></div>
+      <div class="card"><div class="ic">📋</div><h3>여러 개 한 번에</h3><p>주소 여러 줄을 붙여 넣으면 차례로 요약해요. 동시에 1~3개까지.</p></div>
+      <div class="card"><div class="ic">✂️</div><h3>구간만 요약</h3><p><code>12:30~28:00</code>처럼 필요한 부분만 보고서로 만들 수 있어요.</p></div>
+      <div class="card"><div class="ic">⏰</div><h3>예약·한도 자동 대기</h3><p>AI 쓰지 않는 시간에 예약하고, 한도에 걸리면 풀릴 때 이어서 해요.</p></div>
+      <div class="card"><div class="ic">📺</div><h3>채널 자동 요약</h3><p>정해 둔 채널에 새 영상이 올라오면 자동으로 요약해요(하루 상한).</p></div>
+      <div class="card"><div class="ic">✈️</div><h3>텔레그램으로 받기</h3><p>완성되면 내 텔레그램으로 자동 전송. 결과에서 골라 다시 보내기도 돼요.</p></div>
+      <div class="card"><div class="ic">🎙</div><h3>받아쓰기</h3><p>자막이 없는 영상·내 파일도 Whisper로. 자동 자막의 빈 곳만 채우기도 돼요.</p></div>
+      <div class="card"><div class="ic">🖼</div><h3>장면 캡쳐·영상 저장</h3><p>화면 속 표·슬라이드를 보고서 그림으로 넣고 영상도 저장(약관 동의 후).</p></div>
+      <div class="card"><div class="ic">✍️</div><h3>내 스타일·새 버전</h3><p>자주 쓰는 요청을 스타일로 저장하고, 요청만 바꿔 새 버전을 만들어요.</p></div>
+      <div class="card"><div class="ic">🛠</div><h3>자막 고치고 다시</h3><p>잘못 들은 이름·숫자를 바로잡으면 고친 자막으로 다시 써요.</p></div>
+      <div class="card"><div class="ic">🗂</div><h3>결과 관리</h3><p>버전 묶어 보기, 본문 검색, 제목 바꾸기, 휴지통 삭제, 여러 개 지우기.</p></div>
+      <div class="card"><div class="ic">💾</div><h3>백업·복원</h3><p>보고서·설정·기록을 파일 하나로 새 PC에 옮겨요. 토큰·로그인 정보는 빼고요.</p></div>
+      <div class="card"><div class="ic">🔄</div><h3>자동 업데이트</h3><p>설정에서 [설치] 한 번. 설정과 보고서는 그대로, 유튜브 부품은 따로 자동 갱신.</p></div>
+    </div>
+  </section>
+
+  <section id="visuals">
+    <div class="vis">
+      <div>
+        <h2>보고서 정리 그림</h2>
+        <p class="sub">글자로 상자를 흉내 내지 않아요. AI는 내용만 정하고 앱이 깔끔하게 그려서, PDF 어떤 크기에서도 깨지지 않아요. 내용에 맞을 때만 들어가요.</p>
+        <ul><li>흐름도</li><li>비교표</li><li>타임라인</li><li>핵심 숫자 카드</li><li>장단점·찬반</li><li>원인과 결과 나무</li><li>실행 단계</li><li>막대·선 차트</li><li>핵심 세 줄</li></ul>
+      </div>
+      <img class="shot" src="visuals.png" alt="정리 그림 예시: 핵심 세 줄, 비교표, 타임라인, 숫자 카드, 장단점, 원인 나무, 실행 단계, 차트" loading="lazy">
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>설치</h2>
+    <p class="sub">3분이면 돼요.</p>
+    <div class="steps">
+      <div class="card"><h3><b>1.</b> 내려받기</h3><p><a href="https://github.com/morabitandro-dotcom/report-ttukttak/releases/latest">최신 버전 페이지</a>에서 <code>ReportTtukttak_Setup_&lt;버전&gt;.exe</code>를 받아요.</p></div>
+      <div class="card"><h3><b>2.</b> 실행</h3><p>"Windows의 PC 보호" 창이 뜨면 <b>[추가 정보] → [실행]</b>. 코드 서명이 없어서 처음에만 떠요.</p></div>
+      <div class="card"><h3><b>3.</b> 첫 실행 안내</h3><p>약관 → AI → 저장 폴더 → 형식 → 받아쓰기 → 텔레그램 → 편하게 쓰기 순서로 고르면 끝.</p></div>
+    </div>
+    <h3 style="margin:30px 0 12px">필요한 것</h3>
+    <div class="req">
+      <div class="card"><h3>Claude로 요약</h3><p>Claude Pro/Max 구독 + Claude Code. 명령 창에서 <code>claude</code> 실행 후 <code>/login</code></p></div>
+      <div class="card"><h3>ChatGPT로 요약</h3><p>ChatGPT Plus/Pro 구독 + Codex. 명령 창에서 <code>codex login</code></p></div>
+    </div>
+    <p class="note">Windows 10/11 64비트, Microsoft Edge(기본 설치돼 있음, PDF 만들 때 써요). 둘 중 하나만 있어도 돼요.</p>
+  </section>
+
+  <section id="faq">
+    <h2>자주 묻는 것</h2>
+    <details><summary>돈이 더 드나요?</summary><p>앱은 무료예요. 이미 쓰는 Claude·ChatGPT 구독 로그인으로만 요약하고, API 키나 추가 크레딧은 쓰지 않아요. 한도에 걸리면 결제 대신 풀릴 때까지 기다렸다 이어서 해요.</p></details>
+    <details><summary>예전 버전(0.1.3 이하)을 쓰고 있어요.</summary><p>앱 안 업데이트가 끝까지 안 될 수 있어요. 최신 설치 파일을 받아 그대로 실행하면 위에 덮어 설치되고, 설정·보고서·기록은 그대로 남아요. 0.1.4부터는 앱 안에서 업데이트돼요.</p></details>
+    <details><summary>보고서는 어디에 저장되나요?</summary><p>기본은 <code>문서\보고서뚝딱</code> 아래 자막·보고서·영상 폴더예요. 설정에서 기본 폴더 하나만 바꾸면 세 폴더가 함께 옮겨져요. AI에는 영상 제목·자막 글·요청만 보내고, 영상 파일과 내 PC의 다른 파일은 보내지 않아요.</p></details>
+    <details><summary>앱이 멈추거나 꺼졌어요.</summary><p><code>%LOCALAPPDATA%\보고서뚝딱\crash.log</code> 파일을 보내 주세요. 원인을 바로 찾을 수 있어요.</p></details>
+    <details><summary>지우려면요?</summary><p>Windows 설정 → 앱 → 보고서뚝딱 → 제거. 만든 보고서와 설정은 남아요.</p></details>
+    <details><summary>영상을 저장해도 되나요?</summary><p>본인이 권리를 가진 영상이나 개인 학습 범위에서만 쓰세요. 저장한 영상·캡쳐를 다시 올리거나 나눠 주지 마세요. 이 앱은 DRM이나 접근 제한을 우회하지 않아요.</p></details>
+  </section>
+</main>
+
+<footer><div class="wrap">보고서뚝딱 · <a href="https://github.com/morabitandro-dotcom/report-ttukttak/releases">모든 버전</a> · AI가 요약한 보고서는 원문과 다를 수 있어요. 중요한 내용은 근거 시각 링크로 원본을 확인하세요.</div></footer>
+</body>
+</html>
